@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const OpenAI = require("openai");
@@ -9,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 const MODEL = process.env.OPENAI_MODEL || "gpt-5.6-luna";
 
 if (!process.env.OPENAI_API_KEY) {
-    console.error("ERROR: OPENAI_API_KEY belum diatur di file .env");
+    console.error("ERROR: OPENAI_API_KEY belum diatur.");
     process.exit(1);
 }
 
@@ -19,6 +20,10 @@ const client = new OpenAI({
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "Index.html"));
+});
 
 app.post("/api/chat", async (req, res) => {
     try {
@@ -50,9 +55,11 @@ app.post("/api/chat", async (req, res) => {
 });
 
 app.get("/api/health", (req, res) => {
-    res.json({ status: "ok" });
+    res.json({
+        status: "ok"
+    });
 });
 
-app.listen(PORT, () => {
-    console.log(`Timy backend berjalan di http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Timy backend berjalan di port ${PORT}`);
 });
